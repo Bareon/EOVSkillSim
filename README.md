@@ -1,5 +1,5 @@
 # Etrian Odyssey V Skill Simulator
-_Desktop character skill simulator for EOV / EO5._ 
+_Desktop character skill sim for EOV / EO5._ 
 
 This is one of my first sizeable projects in C++, Qt, and git. I hope nevertheless the community enjoys some benefit as I learn and flesh out the project. The simulator is satisfactorily functional, but still early stage bugs if one hunts deeply enough.
 
