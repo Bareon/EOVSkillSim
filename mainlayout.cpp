@@ -10,7 +10,8 @@ MainLayout::MainLayout(QWidget *parent) : QWidget(parent) {
 //Initializes and creates main layout widgets for simulator
 void MainLayout::setupLayout() {
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName("C:\\Users\\Brent\\Documents\\EOVSkillSim\\EOVSkills.db");
+  QDir dir(QApplication::applicationDirPath());
+  db.setDatabaseName(dir.filePath("EOVSkills.db"));
   db.open();
 
 //Character stats
