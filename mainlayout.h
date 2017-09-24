@@ -38,6 +38,7 @@ public slots:
   void setSkillsM();
   void setMasteries();
   void setActiveTab();
+  void checkReqsR();
   void checkReqs();
   void checkDeps();
   void classChanged();
@@ -53,6 +54,7 @@ private:
   int ptsTotal = 0;
   int retPts = 0;
   int retLv = 30;
+  QMap<int, int> skillMapR;
   QMap<QString, int> skillMap;
   QSqlDatabase db;
   QComboBox *raceBox;

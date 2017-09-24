@@ -111,6 +111,7 @@ void MainLayout::setupLayout() {
       raceChecks[i]->setEnabled(false);
     }
     connect(raceChecks[i],SIGNAL(toggled(bool)),this,SLOT(updateSkillPts()));
+    connect(raceChecks[i],SIGNAL(toggled(bool)),this,SLOT(checkReqsR()));
     connect(raceChecks[i],SIGNAL(toggled(bool)),raceButtons[i],SIGNAL(clicked(bool)));
     raceSet[i]->addWidget(raceButtons[i]);
     raceSet[i]->addWidget(raceChecks[i]);
@@ -272,21 +273,14 @@ void MainLayout::updateDescRace() {
   QString skill = QObject::sender()->property("text").toString();
   QSqlQuery query;
   QString race = raceBox->currentText();
-  query.prepare("SELECT desc, reqUsers, reqLv"
+  query.prepare("SELECT desc, descUse, reqLv"
                 " FROM RaceSkills WHERE race = :race and name= :skill");
   query.bindValue(":race",race);
   query.bindValue(":skill",skill);
   query.exec();
   query.next();
-  QString desc = skill + " - ";
-  if (query.value(1) == 1) {
-      desc += query.value(1).toString() + " Union";
-    } else if (query.value(1) > 0) {
-      desc += query.value(1).toString() + " Unions";
-    } else {
-      desc+= " Passive";
-    }
-  desc += "\n*****\n" + query.value(0).toString() + "\n\nRequirement:\nLv. "
+  QString desc = skill + " - " + query.value(1).toString()
+    +"\n*****\n" + query.value(0).toString() + "\n\nRequirement:\nLv. "
     + query.value(2).toString() + "\n";
 
   skillDesc->setPlainText(desc);
@@ -334,19 +328,21 @@ void MainLayout::resetSkills() {
 
 //Updates Race Skill buttons with active Race, resets allocation
 void MainLayout::setSkillsR() {
+  skillMapR.clear();
   QSqlQuery query;
   QString race = raceBox->currentText();
-  query.prepare("SELECT name FROM RaceSkills WHERE race = :race");
+  query.prepare("SELECT name, reqLv FROM RaceSkills WHERE race = :race");
   query.bindValue(":race",race);
   query.exec();
-  for (int i = 0; i < 24; ++i) {
-      query.next();
-      QString skillName = query.value(0).toString();
-      raceButtons[i]->setText(skillName);
+  for (int i = 0; i < numRaceSkills; ++i) {
+    query.next();
+    QString skillName = query.value(0).toString();
+    raceButtons[i]->setText(skillName);
       if (i > 3) {
         raceChecks[i]->setChecked(false);
       }
-    }
+    skillMapR.insert(i,query.value(1).toInt());
+  }
 }
 
 //Updates Base Skill buttons with active Class, resets allocation
@@ -408,6 +404,14 @@ void MainLayout::setSkillsM() {
 
 }
 
+void MainLayout::checkReqsR() {
+  for (int i = 8; i < numRaceSkills; ++i) {
+    if (raceChecks[i]->isChecked() && skillMapR.value(i) > level->value()) {
+      level->setValue(skillMapR.value(i));
+    }
+  }
+}
+
 //Checks for valid Skill requirements, allocates if not
 void MainLayout::checkReqs() {
   QString skill = QObject::sender()->objectName();
@@ -426,9 +430,9 @@ void MainLayout::checkReqs() {
     int req1Lv = query.value(1).toInt();
     int req1LvCu = classSkillLv[req1Ind]->value();
     if (req1LvCu < req1Lv) {
-      classSkillLv[req1Ind]->blockSignals(true);
+      //classSkillLv[req1Ind]->blockSignals(true);
       classSkillLv[req1Ind]->setValue(req1Lv);
-      classSkillLv[req1Ind]->blockSignals(false);
+      //classSkillLv[req1Ind]->blockSignals(false);
     }
   }
 
@@ -437,9 +441,9 @@ void MainLayout::checkReqs() {
     int req2Lv = query.value(3).toInt();
     int req2LvCu = classSkillLv[req2Ind]->value();
     if (req2LvCu < req2Lv) {
-      classSkillLv[req2Ind]->blockSignals(true);
+     // classSkillLv[req2Ind]->blockSignals(true);
       classSkillLv[req2Ind]->setValue(req2Lv);
-      classSkillLv[req2Ind]->blockSignals(false);
+      //classSkillLv[req2Ind]->blockSignals(false);
     }
   }
 
@@ -448,9 +452,9 @@ void MainLayout::checkReqs() {
     int req3Lv = query.value(5).toInt();
     int req3LvCu = classSkillLv[req3Ind]->value();
     if (req3LvCu < req3Lv) {
-      classSkillLv[req3Ind]->blockSignals(true);
+      //classSkillLv[req3Ind]->blockSignals(true);
       classSkillLv[req3Ind]->setValue(req3Lv);
-      classSkillLv[req3Ind]->blockSignals(false);
+      //classSkillLv[req3Ind]->blockSignals(false);
     }
   }
 }
@@ -465,9 +469,8 @@ void MainLayout::checkDeps() {
   int skillRevId;
 
   query.prepare("SELECT name, rank, req1, req1Lv, req2, req2Lv, req3, req3Lv"
-    " FROM ClassSkills WHERE class = :job and rank = :rank and req1 != :null");
+    " FROM ClassSkills WHERE class = :job and req1 != :null");
   query.bindValue(":job",job);
-  query.bindValue(":rank", rank);
   query.bindValue(":null","NULL");
   query.exec();
   while (query.next()) {
