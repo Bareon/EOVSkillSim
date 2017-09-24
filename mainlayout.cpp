@@ -280,8 +280,8 @@ void MainLayout::updateDescRace() {
   query.exec();
   query.next();
   QString desc = skill + " - " + query.value(1).toString()
-    +"\n*****\n" + query.value(0).toString() + "\n\nRequirement:\nLv. "
-    + query.value(2).toString() + "\n";
+    +"\n*****\nRequirement:\nLv. " + query.value(2).toString() + "\n\n"
+    + query.value(0).toString();
 
   skillDesc->setPlainText(desc);
 }
@@ -298,8 +298,7 @@ void MainLayout::updateDescClass() {
   query.bindValue(":skill",skill);
   query.exec();
   query.next();
-  QString desc = skill + " - " + query.value(1).toString() + "\n*****\n"
-    + query.value(0).toString() + "\n\nRequirement:\n";
+  QString desc = skill + " - " + query.value(1).toString() + "\n*****\nRequirement:\n";
   if (query.value(3) != "") {
       for (int i = 3; query.value(i) != "" && i < 8; i+=2) {
         desc+= query.value(i).toString() + " Lv. " + query.value(i+1).toString() + "\n";
@@ -308,6 +307,7 @@ void MainLayout::updateDescClass() {
   } else {
     desc+= "None\n\n";
   }
+  desc+= query.value(0).toString() + "\n\n";
   desc+= query.value(2).toString();
 
   skillDesc->setPlainText(desc);
