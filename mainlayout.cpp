@@ -1,4 +1,5 @@
 #include "mainlayout.h"
+#include "linedraw.h"
 
 #include <QtWidgets>
 #include <QDebug>
@@ -119,6 +120,7 @@ void MainLayout::setupLayout() {
     raceSet[i]->setSpacing(2);
   }
 
+  //TODO: Logic this
   raceLv1Grid->addLayout(raceSet[0],0,0);
   raceLv1Grid->addLayout(raceSet[1],0,1);
   raceLv1Grid->addLayout(raceSet[2],1,0);
@@ -143,6 +145,7 @@ void MainLayout::setupLayout() {
   raceLv20Grid->addLayout(raceSet[21],0,1);
   raceLv20Grid->addLayout(raceSet[22],1,0);
   raceLv20Grid->addLayout(raceSet[23],1,1);
+  //
 
   raceLv1->setLayout(raceLv1Grid);
   raceLv5->setLayout(raceLv5Grid);
@@ -160,15 +163,32 @@ void MainLayout::setupLayout() {
 
 
 //Class Skills tab
+  //Initialize Skill Positions
+  for (int i = 0; i < numSkillPos;) {
+    QPair<int,int> pair;
+    for (int y = 0; y <= 1; y++) {
+      for (int x = 0; x <= 6; x++) {
+        pair.first = x;
+        pair.second = y;
+        skillPos.insert(i,pair);
+        ++i;
+      }
+    }
+  }
   QHBoxLayout *charSkills = new QHBoxLayout;
   QTabWidget *charSkillsTabs = new QTabWidget;
   classTab = new QWidget;
   classSkillsBox = new QHBoxLayout;
-  baseSkills = new QFormLayout;
-  masterSkills = new QFormLayout;
+  baseSkills = new QGridLayout;
+  baseSkills->setHorizontalSpacing(5);
+  baseSkills->minimumHeightForWidth(1800);
+  masterSkills = new QGridLayout;
+  masterSkills->setHorizontalSpacing(5);
+  //masterSkills->columnMinimumWidth(0,300)
   baseSkillsBox = new QGroupBox(tr("Base"));
   masterSkillsBox = new QGroupBox(tr("Master"));
   for (int i = 0; i < numClassSkills; ++i) {
+    classSet[i] = new QHBoxLayout;
     QString skillName("Skill");
     classButtons[i] = new QPushButton(skillName);
     classButtons[i]->setMinimumWidth(115);
@@ -184,19 +204,22 @@ void MainLayout::setupLayout() {
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(updateDescClass()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(checkDeps()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(checkReqs()));
+    classSet[i]->addWidget(classButtons[i]);
+    classSet[i]->addWidget(classSkillLv[i]);
+    classSet[i]->setSizeConstraint(QLayout::SetFixedSize);
 
     if (i < 10) {
-      baseSkills->addRow(classButtons[i],classSkillLv[i]);
+      baseSkills->addLayout(classSet[i],skillPos[i].first,skillPos[i].second);
     } else {
-      masterSkills->addRow(classButtons[i],classSkillLv[i]);
+      masterSkills->addLayout(classSet[i],skillPos[i-10].first,skillPos[i-10].second);
     }
   }
-
   baseSkillsBox->setLayout(baseSkills);
   masterSkillsBox->setLayout(masterSkills);
 
   classSkillsBox->addWidget(baseSkillsBox);
   classSkillsBox->addWidget(masterSkillsBox);
+
   classTab->setLayout(classSkillsBox);
 
   charSkillsTabs->addTab(raceTab, "Race");
@@ -206,13 +229,20 @@ void MainLayout::setupLayout() {
   skillDesc->setReadOnly(1);
   charSkills->addWidget(charSkillsTabs);
   charSkills->addWidget(skillDesc);
+  //auto* lineDraw = new LineDraw(classButtons[0], classButtons[15]);
+  //lineDraw->setLayout(classSkillsBox);
+  //LineDraw *draw = new LineDraw;
+  //draw->addWidgets(classButtons[0],classButtons[12]);
+
 
 //Combine layouts and set mainLayout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(charStats);
   mainLayout->addLayout(skillPtsBox);
   mainLayout->addLayout(charSkills);
+  //mainLayout->addWidget(draw);
   setLayout(mainLayout);
+  update();
 
 }
 
@@ -226,16 +256,16 @@ void MainLayout::updateSkillPts() {
     if ( 30 <= retLv && retLv < 40) {
       retPts = 4;
     } else if ( 40 <= retLv && retLv < 50) {
-        retPts = 5;
-      } else if ( 50 <= retLv && retLv < 60) {
-        retPts = 6;
-      } else if ( 60 <= retLv && retLv < 70) {
-        retPts = 7;
-      } else if ( 70 <= retLv && retLv < 98) {
-        retPts = 8;
-      } else if ( retLv == 99) {
-        retPts = 10;
-      }
+      retPts = 5;
+    } else if ( 50 <= retLv && retLv < 60) {
+      retPts = 6;
+    } else if ( 60 <= retLv && retLv < 70) {
+      retPts = 7;
+    } else if ( 70 <= retLv && retLv < 98) {
+      retPts = 8;
+    } else if ( retLv == 99) {
+      retPts = 10;
+    }
     if (level->value() < 15) {
       level->setValue(15);
     }
@@ -248,11 +278,11 @@ void MainLayout::updateSkillPts() {
       }
   }
   for(int i=0; i < numClassSkills; ++i) {
-      ptsAlloc += classSkillLv[i]->value();
-      while (i >= 10 && classSkillLv[i]->value() > 0 && level->value() < 20) {
-          level->setValue(20);
-        }
+    ptsAlloc += classSkillLv[i]->value();
+    while (i >= 10 && classSkillLv[i]->value() > 0 && level->value() < 20) {
+        level->setValue(20);
     }
+  }
 
   if (level->value() >= 20) {
     ptsTotal = 7 + level->value() + retPts;
@@ -327,6 +357,20 @@ void MainLayout::resetSkills() {
   updateSkillPts();
 }
 
+//Sets Class masteries to dropdown box
+void MainLayout::setMasteries() {
+  masterBox->clear();
+  QSqlQuery query;
+  QString job = classBox->currentText();
+  query.prepare("SELECT DISTINCT rank FROM ClassSkills WHERE class = :job and rank != :base");
+  query.bindValue(":job",job);
+  query.bindValue(":base", "Base");
+  query.exec();
+  while (query.next()) {
+    masterBox->addItem(query.value(0).toString());
+  }
+}
+
 //Updates Race Skill buttons with active Race, resets allocation
 void MainLayout::setSkillsR() {
   skillMapR.clear();
@@ -354,32 +398,35 @@ void MainLayout::setSkillsB() {
   query.bindValue(":job",job);
   query.exec();
   for (int i = 0; i < 10; ++i) {
-      query.next();
-      QString skillName = query.value(0).toString();
-      qint32 skillMax = query.value(1).toInt();
-      classButtons[i]->setText(skillName);
-      classButtons[i]->setObjectName(skillName);
-      classSkillLv[i]->setMaximum(skillMax);
-      classSkillLv[i]->setValue(0);
-      classSkillLv[i]->setObjectName(skillName);
-      skillMap.insert(skillName,i);
-    }
-
-}
-
-//Sets Class masteries to dropdown box
-void MainLayout::setMasteries() {
-  masterBox->clear();
-  QSqlQuery query;
-  QString job = classBox->currentText();
-  query.prepare("SELECT DISTINCT rank FROM ClassSkills WHERE class = :job and rank != :base");
-  query.bindValue(":job",job);
-  query.bindValue(":base", "Base");
-  query.exec();
-  while (query.next()) {
-    masterBox->addItem(query.value(0).toString());
+    query.next();
+    QString skillName = query.value(0).toString();
+    int skillMax = query.value(1).toInt();
+    classButtons[i]->setText(skillName);
+    classButtons[i]->setObjectName(skillName);
+    classSkillLv[i]->setMaximum(skillMax);
+    classSkillLv[i]->setValue(0);
+    classSkillLv[i]->setObjectName(skillName);
+    skillMap.insert(skillName,i);
+    baseSkills->removeItem(classSet[i]);
   }
-
+  query.prepare("SELECT slot FROM ClassSkills WHERE class = :job AND rank = 'Base'");
+  query.bindValue(":job",job);
+  query.exec();
+  for (int i = 0; i < 10; ++i) {
+    query.next();
+    int slot = query.value(0).toInt();
+    baseSkills->addLayout(classSet[i]
+     , skillPos[slot].first
+     , skillPos[slot].second);
+  }
+ for (int y = 0; y <= 1; ++y) {
+    for (int x = 0; x <= 6; ++x) {
+      if (baseSkills->itemAtPosition(x,y) == 0) {
+        baseSkills->addItem(new QSpacerItem(0,28
+          ,QSizePolicy::Expanding,QSizePolicy::Fixed),x,y);
+      }
+    }
+  }
 }
 
 //Updates Master Skill buttons with active Class, resets Master Skill allocation
@@ -394,15 +441,34 @@ void MainLayout::setSkillsM() {
   for (int i = 10; i < numClassSkills; ++i) {
       query.next();
       QString skillName = query.value(0).toString();
-      qint32 skillMax = query.value(1).toInt();
+      int skillMax = query.value(1).toInt();
       classButtons[i]->setText(skillName);
       classButtons[i]->setObjectName(skillName);
       classSkillLv[i]->setMaximum(skillMax);
       classSkillLv[i]->setValue(0);
       classSkillLv[i]->setObjectName(skillName);
       skillMap.insert(skillName,i);
+      masterSkills->removeItem(classSet[i]);
     }
-
+  query.prepare("SELECT slot FROM ClassSkills WHERE class = :job AND rank = :mastery");
+  query.bindValue(":job",job);
+  query.bindValue(":mastery",mastery);
+  query.exec();
+  for (int i = 10; i < numClassSkills; ++i) {
+    query.next();
+    int slot = query.value(0).toInt();
+    masterSkills->addLayout(classSet[i]
+     , skillPos[slot].first
+     , skillPos[slot].second);
+  }
+  for (int y = 0; y <= 1; ++y) {
+    for (int x = 0; x <= 6; ++x) {
+      if (masterSkills->itemAtPosition(x,y) == 0) {
+        masterSkills->addItem(new QSpacerItem(115,28
+          ,QSizePolicy::Expanding,QSizePolicy::Fixed),x,y);
+      }
+    }
+  }
 }
 
 void MainLayout::checkReqsR() {
@@ -599,5 +665,11 @@ QString MainLayout::writeBuild() {
 
   return build;
 }
-
-
+/*
+void MainLayout::paintEvent(QPaintEvent *e) {
+  QPainter painter(this);
+  QPoint start = classButtons[0]->rect().center();
+  QPoint end = classButtons[5]->rect().center();
+  painter.drawLine(500,500,100,100);
+  painter.drawLine(start,end);
+}*/

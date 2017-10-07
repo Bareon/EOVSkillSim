@@ -10,7 +10,6 @@ MainWindow::MainWindow() {
   mainLayout->setMasteries();
   mainLayout->setSkillsM();
   createMenus();
-
 }
 
 void MainWindow::createMenus() {
