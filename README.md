@@ -8,15 +8,16 @@ The simulator allows you to allocate and visualize your character's Skill Point 
 
 # To-Do
 ### Priority
-* Create a more apparent visual for skill requirements and dependencies representative of EO5's in-game Skill tree
+* Class skill trees emulate in-game tree shapes, albeit with minor(yet infuriating) alignment issues. Connecting lines for pre-requisites still needed.
+* Race skills tab is serviceably basic, but ugly. 
 
 ### Minor
-* Bug (Feature?) - Skill Points can allocate into negative if exceeding the total from Lv. 99!99
-* Switch tab focus on Race or Class change to appropriate tab
-* Info dialog for Damage formulae
-* Consistent descriptions for Skills, may need the game's release for complete information
+* Bug (Feature?) - Skill Points can allocate into negative if exceeding the total from Lv. 99!99.
+* Switch tab focus on Race or Class change to appropriate tab.
+* Info dialog for Damage formulae.
+* Consistent descriptions for Skills, may need the game's release for complete information.
 * Clarity for Defense/Damage modifiers for Skills.
-* Complete stat usage for Master and Race Skills
-* Import function for saved builds
+* Complete stat usage for Master and Race Skills.
+* Import function for saved builds.
 * Easier means of allocating points?
 * Info dialog for stat totals?
