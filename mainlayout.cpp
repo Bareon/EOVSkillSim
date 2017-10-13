@@ -364,7 +364,6 @@ void MainLayout::updateDescClass() {
 
 //Resets Skill Point allocation, for Reset button
 void MainLayout::resetSkills() {
-
   for (int i=0; i < numClassSkills; ++i) {
     classSkillLv[i]->blockSignals(true);
     classSkillLv[i]->setValue(0);
@@ -442,7 +441,7 @@ void MainLayout::setSkillsB() {
       if (baseSkills->itemAtPosition(x,y) == 0) {
         //QHBoxLayout *blank = new QHBoxLayout;
         //baseSkills->addLayout(blank,x,y);
-        baseSkills->addItem(new QSpacerItem(115,26.5
+        baseSkills->addItem(new QSpacerItem(115,27
           ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
       }
     }
@@ -484,7 +483,7 @@ void MainLayout::setSkillsM() {
   for (int y = 0; y <= 1; ++y) {
     for (int x = 0; x <= 6; ++x) {
       if (masterSkills->itemAtPosition(x,y) == 0) {
-        masterSkills->addItem(new QSpacerItem(115,26.5
+        masterSkills->addItem(new QSpacerItem(115,27
           ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
         //QHBoxLayout *blank = new QHBoxLayout;
         //masterSkills->addLayout(blank,x,y);
@@ -558,9 +557,13 @@ void MainLayout::checkDeps() {
   int skillRevId;
 
   query.prepare("SELECT name, rank, req1, req1Lv, req2, req2Lv, req3, req3Lv"
-    " FROM ClassSkills WHERE class = :job and req1 != :null");
+    " FROM ClassSkills WHERE class = :job and req1 != :null"
+    " and (rank = :base or rank = :master)");
   query.bindValue(":job",job);
+  query.bindValue(":base","Base");
+  query.bindValue(":master",rank);
   query.bindValue(":null","NULL");
+
   query.exec();
   while (query.next()) {
     skillRevId = skillMap.value(query.value(0).toString());
