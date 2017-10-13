@@ -32,10 +32,12 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     mainlayout.cpp \
+    linedraw.cpp
 
 HEADERS += \
         mainwindow.h \
     mainlayout.h \
-    mainlayout.h
+    mainlayout.h \
+    linedraw.h
 
 

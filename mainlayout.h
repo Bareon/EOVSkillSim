@@ -27,6 +27,7 @@ public:
   void setRaces();
   void setClasses();
   QString writeBuild();
+  //void paintEvent(QPaintEvent *e);
 
 public slots:
   void updateSkillPts();
@@ -54,8 +55,10 @@ private:
   int ptsTotal = 0;
   int retPts = 0;
   int retLv = 30;
+
   QMap<int, int> skillMapR;
   QMap<QString, int> skillMap;
+  QMap<int, QPair<int,int>> skillPos;
   QSqlDatabase db;
   QComboBox *raceBox;
   QComboBox *classBox;
@@ -70,8 +73,8 @@ private:
   QTabWidget *charSkillsTabs;
   QPlainTextEdit *skillDesc;
   QHBoxLayout *classSkillsBox;
-  QFormLayout *baseSkills;
-  QFormLayout *masterSkills;
+  QGridLayout *baseSkills;
+  QGridLayout *masterSkills;
   QGridLayout *raceSkillsBox;
   QGroupBox *baseSkillsBox;
   QGroupBox *masterSkillsBox;
@@ -81,10 +84,11 @@ private:
   QGroupBox *raceLv15;
   QGroupBox *raceLv20;
 
-  enum { numRaceSkills = 24, numClassSkills = 20};
+  enum { numRaceSkills = 24, numClassSkills = 20, numSkillPos = 14};
   QHBoxLayout *raceSet[numRaceSkills];
   QPushButton *raceButtons[numRaceSkills];
   QCheckBox *raceChecks[numRaceSkills];
+  QHBoxLayout *classSet[numClassSkills];
   QPushButton *classButtons[numClassSkills];
   QSpinBox *classSkillLv[numClassSkills];
   QWidget *raceTab;
