@@ -96,6 +96,16 @@ void MainLayout::setupLayout() {
   raceLv10 = new QGroupBox(tr("Lv. 10"));
   raceLv15 = new QGroupBox(tr("Lv. 15"));
   raceLv20 = new QGroupBox(tr("Lv. 20"));
+  raceLv1->setFlat(true);
+  raceLv1->setAlignment(Qt::AlignHCenter);
+  raceLv5->setFlat(true);
+  raceLv5->setAlignment(Qt::AlignHCenter);
+  raceLv10->setFlat(true);
+  raceLv10->setAlignment(Qt::AlignHCenter);
+  raceLv15->setFlat(true);
+  raceLv15->setAlignment(Qt::AlignHCenter);
+  raceLv20->setFlat(true);
+  raceLv20->setAlignment(Qt::AlignHCenter);
 
   QGridLayout *raceLv1Grid = new QGridLayout;
   QGridLayout *raceLv5Grid = new QGridLayout;
@@ -158,7 +168,7 @@ void MainLayout::setupLayout() {
   raceSkillsBox->addWidget(raceLv10,0,1);
   raceSkillsBox->addWidget(raceLv15,1,1);
   raceSkillsBox->addWidget(raceLv20,2,1);
-  raceSkillsBox->setSpacing(1);
+  raceSkillsBox->setSpacing(5);
   raceTab->setLayout(raceSkillsBox);
 
 
@@ -179,20 +189,29 @@ void MainLayout::setupLayout() {
   QTabWidget *charSkillsTabs = new QTabWidget;
   classTab = new QWidget;
   classSkillsBox = new QHBoxLayout;
+
   baseSkills = new QGridLayout;
   baseSkills->setHorizontalSpacing(5);
-  baseSkills->minimumHeightForWidth(1800);
+  baseSkills->setContentsMargins(0,5,0,0);
+
   masterSkills = new QGridLayout;
   masterSkills->setHorizontalSpacing(5);
-  //masterSkills->columnMinimumWidth(0,300)
+  masterSkills->setContentsMargins(0,5,0,0);
+
   baseSkillsBox = new QGroupBox(tr("Base"));
+  baseSkillsBox->setFlat(true);
+  baseSkillsBox->setAlignment(Qt::AlignHCenter);
+
   masterSkillsBox = new QGroupBox(tr("Master"));
+  masterSkillsBox->setFlat(true);
+  masterSkillsBox->setAlignment(Qt::AlignHCenter);
+
   for (int i = 0; i < numClassSkills; ++i) {
     classSet[i] = new QHBoxLayout;
     QString skillName("Skill");
     classButtons[i] = new QPushButton(skillName);
-    classButtons[i]->setMinimumWidth(115);
-    classButtons[i]->setMaximumWidth(115);
+    classButtons[i]->setMinimumWidth(90);
+    classButtons[i]->setMaximumWidth(90);
     connect(classButtons[i],SIGNAL(clicked(bool)),this,SLOT(updateDescClass()));
     classSkillLv[i] = new QSpinBox;
     classSkillLv[i]->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
@@ -206,7 +225,6 @@ void MainLayout::setupLayout() {
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(checkReqs()));
     classSet[i]->addWidget(classButtons[i]);
     classSet[i]->addWidget(classSkillLv[i]);
-    classSet[i]->setSizeConstraint(QLayout::SetFixedSize);
 
     if (i < 10) {
       baseSkills->addLayout(classSet[i],skillPos[i].first,skillPos[i].second);
@@ -422,8 +440,10 @@ void MainLayout::setSkillsB() {
  for (int y = 0; y <= 1; ++y) {
     for (int x = 0; x <= 6; ++x) {
       if (baseSkills->itemAtPosition(x,y) == 0) {
-        baseSkills->addItem(new QSpacerItem(0,28
-          ,QSizePolicy::Expanding,QSizePolicy::Fixed),x,y);
+        //QHBoxLayout *blank = new QHBoxLayout;
+        //baseSkills->addLayout(blank,x,y);
+        baseSkills->addItem(new QSpacerItem(115,26.5
+          ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
       }
     }
   }
@@ -464,8 +484,10 @@ void MainLayout::setSkillsM() {
   for (int y = 0; y <= 1; ++y) {
     for (int x = 0; x <= 6; ++x) {
       if (masterSkills->itemAtPosition(x,y) == 0) {
-        masterSkills->addItem(new QSpacerItem(115,28
-          ,QSizePolicy::Expanding,QSizePolicy::Fixed),x,y);
+        masterSkills->addItem(new QSpacerItem(115,26.5
+          ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
+        //QHBoxLayout *blank = new QHBoxLayout;
+        //masterSkills->addLayout(blank,x,y);
       }
     }
   }
@@ -665,6 +687,7 @@ QString MainLayout::writeBuild() {
 
   return build;
 }
+
 /*
 void MainLayout::paintEvent(QPaintEvent *e) {
   QPainter painter(this);
