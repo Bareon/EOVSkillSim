@@ -518,9 +518,9 @@ void MainLayout::checkReqs() {
     int req1Lv = query.value(1).toInt();
     int req1LvCu = classSkillLv[req1Ind]->value();
     if (req1LvCu < req1Lv) {
-      //classSkillLv[req1Ind]->blockSignals(true);
+      classSkillLv[req1Ind]->blockSignals(true);
       classSkillLv[req1Ind]->setValue(req1Lv);
-      //classSkillLv[req1Ind]->blockSignals(false);
+      classSkillLv[req1Ind]->blockSignals(false);
     }
   }
 
@@ -529,9 +529,9 @@ void MainLayout::checkReqs() {
     int req2Lv = query.value(3).toInt();
     int req2LvCu = classSkillLv[req2Ind]->value();
     if (req2LvCu < req2Lv) {
-     // classSkillLv[req2Ind]->blockSignals(true);
+      classSkillLv[req2Ind]->blockSignals(true);
       classSkillLv[req2Ind]->setValue(req2Lv);
-      //classSkillLv[req2Ind]->blockSignals(false);
+      classSkillLv[req2Ind]->blockSignals(false);
     }
   }
 
@@ -540,9 +540,9 @@ void MainLayout::checkReqs() {
     int req3Lv = query.value(5).toInt();
     int req3LvCu = classSkillLv[req3Ind]->value();
     if (req3LvCu < req3Lv) {
-      //classSkillLv[req3Ind]->blockSignals(true);
+      classSkillLv[req3Ind]->blockSignals(true);
       classSkillLv[req3Ind]->setValue(req3Lv);
-      //classSkillLv[req3Ind]->blockSignals(false);
+      classSkillLv[req3Ind]->blockSignals(false);
     }
   }
 }
