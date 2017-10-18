@@ -23,6 +23,7 @@ void MainLayout::setupLayout() {
   raceBox = new QComboBox;
   raceBox->setMinimumWidth(70);
   raceBox->setMaximumWidth(70);
+  raceBox->setMinimumHeight(25);
   raceBox->setObjectName("Race");
   setRaces();
   connect(raceBox,SIGNAL(currentTextChanged(QString)),this,SLOT(setSkillsR()));
@@ -33,6 +34,7 @@ void MainLayout::setupLayout() {
   classBox = new QComboBox;
   classBox->setMinimumWidth(90);
   classBox->setMaximumWidth(90);
+  classBox->setMinimumHeight(25);
   classBox->setObjectName("Class");
   setClasses();
   connect(classBox,SIGNAL(currentTextChanged(QString)),this,SLOT(classChanged()));
@@ -40,11 +42,13 @@ void MainLayout::setupLayout() {
   masterBox = new QComboBox;
   masterBox->setMinimumWidth(100);
   masterBox->setMaximumWidth(100);
+  masterBox->setMinimumHeight(25);
   connect(masterBox,SIGNAL(currentTextChanged(QString)),this,SLOT(masteryChanged()));
 
   level = new QSpinBox;
   level->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
   level->setMaximumWidth(50);
+  level->setMinimumHeight(25);
   level->setPrefix(tr("Lv."));
   level->setMinimum(1);
   level->setMaximum(99);
@@ -58,6 +62,7 @@ void MainLayout::setupLayout() {
   retLevel = new QSpinBox;
   retLevel->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
   retLevel->setMaximumWidth(50);
+  retLevel->setMinimumHeight(25);
   retLevel->setPrefix(tr("Lv."));
   retLevel->setMinimum(30);
   retLevel->setMaximum(99);
@@ -67,6 +72,7 @@ void MainLayout::setupLayout() {
 
 
   resetButton = new QPushButton(tr("Reset"));
+  resetButton->setMinimumHeight(25);
   connect(resetButton,SIGNAL(clicked(bool)),this,SLOT(resetSkills()));
 
   charStats->addWidget(raceLabel);
@@ -116,6 +122,7 @@ void MainLayout::setupLayout() {
     raceSet[i] = new QHBoxLayout;
     raceButtons[i] = new QPushButton("Skill");
     raceButtons[i]->setMinimumWidth(80);
+    raceButtons[i]->setMinimumHeight(32);
     connect(raceButtons[i],SIGNAL(clicked(bool)),this,SLOT(updateDescRace()));
     raceChecks[i] = new QCheckBox;
     if (i < 4) {
@@ -212,6 +219,7 @@ void MainLayout::setupLayout() {
     classButtons[i] = new QPushButton(skillName);
     classButtons[i]->setMinimumWidth(90);
     classButtons[i]->setMaximumWidth(90);
+    classButtons[i]->setMinimumHeight(32);
     connect(classButtons[i],SIGNAL(clicked(bool)),this,SLOT(updateDescClass()));
     classSkillLv[i] = new QSpinBox;
     classSkillLv[i]->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
@@ -219,6 +227,7 @@ void MainLayout::setupLayout() {
     classSkillLv[i]->setMaximumWidth(50);
     classSkillLv[i]->setPrefix("Lv.");
     classSkillLv[i]->setObjectName(classButtons[i]->text());
+    classSkillLv[i]->setMinimumHeight(30);
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(updateSkillPts()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(updateDescClass()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(checkDeps()));
