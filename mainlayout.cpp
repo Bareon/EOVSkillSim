@@ -114,10 +114,16 @@ void MainLayout::setupLayout() {
   raceLv20->setAlignment(Qt::AlignHCenter);
 
   QGridLayout *raceLv1Grid = new QGridLayout;
+  raceLv1Grid->setSizeConstraint(QLayout::SetFixedSize);
+  raceLv1Grid->setVerticalSpacing(15);
   QGridLayout *raceLv5Grid = new QGridLayout;
+  raceLv5Grid->setSizeConstraint(QLayout::SetFixedSize);
   QGridLayout *raceLv10Grid = new QGridLayout;
+  raceLv10Grid->setSizeConstraint(QLayout::SetFixedSize);
   QGridLayout *raceLv15Grid = new QGridLayout;
+  raceLv15Grid->setSizeConstraint(QLayout::SetFixedSize);
   QGridLayout *raceLv20Grid = new QGridLayout;
+  raceLv20Grid->setSizeConstraint(QLayout::SetFixedSize);
   for (int i = 0; i < numRaceSkills; ++i) {
     raceSet[i] = new QHBoxLayout;
     raceButtons[i] = new QPushButton("Skill");
@@ -199,11 +205,15 @@ void MainLayout::setupLayout() {
 
   baseSkills = new QGridLayout;
   baseSkills->setHorizontalSpacing(5);
+  baseSkills->setVerticalSpacing(10);
   baseSkills->setContentsMargins(0,5,0,0);
+  baseSkills->setSizeConstraint(QLayout::SetFixedSize);
 
   masterSkills = new QGridLayout;
   masterSkills->setHorizontalSpacing(5);
+  masterSkills->setVerticalSpacing(10);
   masterSkills->setContentsMargins(0,5,0,0);
+  masterSkills->setSizeConstraint(QLayout::SetFixedSize);
 
   baseSkillsBox = new QGroupBox(tr("Base"));
   baseSkillsBox->setFlat(true);
@@ -220,7 +230,7 @@ void MainLayout::setupLayout() {
     classButtons[i]->setMinimumWidth(90);
     classButtons[i]->setMaximumWidth(90);
     classButtons[i]->setMinimumHeight(32);
-    connect(classButtons[i],SIGNAL(clicked(bool)),this,SLOT(updateDescClass()));
+
     classSkillLv[i] = new QSpinBox;
     classSkillLv[i]->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
     classSkillLv[i]->setParent(classButtons[i]);
@@ -228,6 +238,8 @@ void MainLayout::setupLayout() {
     classSkillLv[i]->setPrefix("Lv.");
     classSkillLv[i]->setObjectName(classButtons[i]->text());
     classSkillLv[i]->setMinimumHeight(30);
+
+    connect(classButtons[i],SIGNAL(clicked(bool)),this,SLOT(updateDescClass()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(updateSkillPts()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(updateDescClass()));
     connect(classSkillLv[i],SIGNAL(valueChanged(int)),this,SLOT(checkDeps()));
@@ -241,6 +253,30 @@ void MainLayout::setupLayout() {
       masterSkills->addLayout(classSet[i],skillPos[i-10].first,skillPos[i-10].second);
     }
   }
+
+  for (int i = 0; i < 8; ++i) {
+    nullSet[i] = new QHBoxLayout;
+    QString skillName("Null");
+    nullButtons[i] = new QPushButton(skillName);
+    nullButtons[i]->setMinimumWidth(90);
+    nullButtons[i]->setMaximumWidth(90);
+    nullButtons[i]->setMinimumHeight(32);
+    nullSkillLv[i] = new QSpinBox;
+    nullSkillLv[i]->setMaximumWidth(50);
+    nullSkillLv[i]->setPrefix("Lv.");
+    nullSkillLv[i]->setMinimumHeight(30);
+    nullSet[i]->addWidget(nullButtons[i]);
+    nullSet[i]->addWidget(nullSkillLv[i]);
+    QSizePolicy sp_retainB = nullButtons[i]->sizePolicy();
+    QSizePolicy sp_retainS = nullSkillLv[i]->sizePolicy();
+    sp_retainB.setRetainSizeWhenHidden(true);
+    sp_retainS.setRetainSizeWhenHidden(true);
+    nullButtons[i]->setSizePolicy(sp_retainB);
+    nullButtons[i]->setVisible(0);
+    nullSkillLv[i]->setSizePolicy(sp_retainS);
+    nullSkillLv[i]->setVisible(0);
+  }
+
   baseSkillsBox->setLayout(baseSkills);
   masterSkillsBox->setLayout(masterSkills);
 
@@ -434,7 +470,12 @@ void MainLayout::setSkillsB() {
     classSkillLv[i]->setObjectName(skillName);
     skillMap.insert(skillName,i);
     baseSkills->removeItem(classSet[i]);
+    if (i < 4) {
+      baseSkills->removeItem(nullSet[i]);
+    }
   }
+
+
   query.prepare("SELECT slot FROM ClassSkills WHERE class = :job AND rank = 'Base'");
   query.bindValue(":job",job);
   query.exec();
@@ -445,13 +486,12 @@ void MainLayout::setSkillsB() {
      , skillPos[slot].first
      , skillPos[slot].second);
   }
- for (int y = 0; y <= 1; ++y) {
+  int i=0;
+  for (int y = 0; y <= 1; ++y) {
     for (int x = 0; x <= 6; ++x) {
       if (baseSkills->itemAtPosition(x,y) == 0) {
-        //QHBoxLayout *blank = new QHBoxLayout;
-        //baseSkills->addLayout(blank,x,y);
-        baseSkills->addItem(new QSpacerItem(115,27
-          ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
+        baseSkills->addLayout(nullSet[i],x,y);
+        ++i;
       }
     }
   }
@@ -477,6 +517,9 @@ void MainLayout::setSkillsM() {
       classSkillLv[i]->setObjectName(skillName);
       skillMap.insert(skillName,i);
       masterSkills->removeItem(classSet[i]);
+      //if (i < 4) {
+      //  masterSkills->removeItem(nullSet[i+4]);
+     // }
     }
   query.prepare("SELECT slot FROM ClassSkills WHERE class = :job AND rank = :mastery");
   query.bindValue(":job",job);
@@ -489,13 +532,12 @@ void MainLayout::setSkillsM() {
      , skillPos[slot].first
      , skillPos[slot].second);
   }
+  int i=4;
   for (int y = 0; y <= 1; ++y) {
     for (int x = 0; x <= 6; ++x) {
       if (masterSkills->itemAtPosition(x,y) == 0) {
-        masterSkills->addItem(new QSpacerItem(115,27
-          ,QSizePolicy::Fixed,QSizePolicy::Fixed),x,y);
-        //QHBoxLayout *blank = new QHBoxLayout;
-        //masterSkills->addLayout(blank,x,y);
+        masterSkills->addLayout(nullSet[i],x,y);
+        ++i;
       }
     }
   }

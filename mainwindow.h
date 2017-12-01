@@ -33,7 +33,9 @@ public:
 private:
   MainLayout *mainLayout;
   QMenu *fileMenu;
-  QMenu *aboutMenu;
+  QMenu *infoMenu;
+  QMenu *formulaMenu;
+  QPlainTextEdit *formulaDesc;
 
   //Functions
   void createMenus();
@@ -41,6 +43,7 @@ private:
 private slots:
   void exportBuild();
   void about();
+  void formulae();
 };
 
 #endif // MAINWINDOW_H

@@ -32,12 +32,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     mainlayout.cpp \
-    linedraw.cpp
+    linedraw.cpp \
+    formuladialog.cpp
 
 HEADERS += \
         mainwindow.h \
     mainlayout.h \
     mainlayout.h \
-    linedraw.h
+    linedraw.h \
+    formuladialog.h
 
 

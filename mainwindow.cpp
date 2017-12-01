@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include "mainwindow.h"
+#include "formuladialog.h"
 
 MainWindow::MainWindow() {
   QCoreApplication::setApplicationName("Etrian Odyssey V Skill Simulator");
@@ -15,8 +16,9 @@ MainWindow::MainWindow() {
 void MainWindow::createMenus() {
   fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(tr("Export Character"), this, &MainWindow::exportBuild);
-  aboutMenu = menuBar()->addMenu(tr("&About"));
-  aboutMenu->addAction(tr("Info"), this, &MainWindow::about);
+  infoMenu = menuBar()->addMenu(tr("&Info"));
+  infoMenu->addAction(tr("Formulae"), this, &MainWindow::formulae);
+  infoMenu->addAction(tr("About"), this, &MainWindow::about);
 }
 
 MainWindow::~MainWindow()
@@ -48,4 +50,11 @@ void MainWindow::about() {
     "</HTML>";
   QMessageBox::about(this, tr("Contact"),
     aboutText);
+}
+
+void MainWindow::formulae() {
+  FormulaDialog *formDialog = new FormulaDialog(this);
+  formDialog->resize(500,600);
+  formDialog->exec();
+
 }

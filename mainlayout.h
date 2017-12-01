@@ -91,6 +91,10 @@ private:
   QHBoxLayout *classSet[numClassSkills];
   QPushButton *classButtons[numClassSkills];
   QSpinBox *classSkillLv[numClassSkills];
+  QHBoxLayout *nullSet[8];
+  QPushButton *nullButtons[8];
+  QSpinBox *nullSkillLv[8];
+
   QWidget *raceTab;
   QWidget *classTab;
   QPushButton *resetButton;
