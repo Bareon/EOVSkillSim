@@ -116,14 +116,19 @@ void MainLayout::setupLayout() {
   QGridLayout *raceLv1Grid = new QGridLayout;
   raceLv1Grid->setSizeConstraint(QLayout::SetFixedSize);
   raceLv1Grid->setVerticalSpacing(15);
+  raceLv1Grid->setHorizontalSpacing(20);
   QGridLayout *raceLv5Grid = new QGridLayout;
   raceLv5Grid->setSizeConstraint(QLayout::SetFixedSize);
+  raceLv5Grid->setHorizontalSpacing(20);
   QGridLayout *raceLv10Grid = new QGridLayout;
   raceLv10Grid->setSizeConstraint(QLayout::SetFixedSize);
+  raceLv10Grid->setHorizontalSpacing(20);
   QGridLayout *raceLv15Grid = new QGridLayout;
   raceLv15Grid->setSizeConstraint(QLayout::SetFixedSize);
+  raceLv15Grid->setHorizontalSpacing(20);
   QGridLayout *raceLv20Grid = new QGridLayout;
   raceLv20Grid->setSizeConstraint(QLayout::SetFixedSize);
+  raceLv20Grid->setHorizontalSpacing(20);
   for (int i = 0; i < numRaceSkills; ++i) {
     raceSet[i] = new QHBoxLayout;
     raceButtons[i] = new QPushButton("Skill");
@@ -181,7 +186,7 @@ void MainLayout::setupLayout() {
   raceSkillsBox->addWidget(raceLv10,0,1);
   raceSkillsBox->addWidget(raceLv15,1,1);
   raceSkillsBox->addWidget(raceLv20,2,1);
-  raceSkillsBox->setSpacing(5);
+  raceSkillsBox->setSpacing(2);
   raceTab->setLayout(raceSkillsBox);
 
 
@@ -496,8 +501,8 @@ void MainLayout::setSkillsB() {
     }
   }
 
-  auto* skillLine = new LineDraw(classButtons[0],classButtons[14]);
-  baseSkillsBox->addItem(skillLine);
+  //auto* skillLine = new LineDraw(classButtons[0],classButtons[14]);
+  //baseSkillsBox->addItem(skillLine);
 }
 
 //Updates Master Skill buttons with active Class, resets Master Skill allocation

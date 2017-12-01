@@ -42,6 +42,7 @@ private:
 
 private slots:
   void exportBuild();
+  void importBuild();
   void about();
   void formulae();
 };

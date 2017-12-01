@@ -16,13 +16,13 @@ MainWindow::MainWindow() {
 void MainWindow::createMenus() {
   fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(tr("Export Character"), this, &MainWindow::exportBuild);
+  fileMenu->addAction(tr("Import Character"), this, &MainWindow::importBuild);
   infoMenu = menuBar()->addMenu(tr("&Info"));
   infoMenu->addAction(tr("Formulae"), this, &MainWindow::formulae);
   infoMenu->addAction(tr("About"), this, &MainWindow::about);
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
 
 }
 
@@ -35,6 +35,10 @@ void MainWindow::exportBuild() {
   QTextStream out(&file);
   out << build;
   file.close();
+}
+
+void MainWindow::importBuild() {
+
 }
 
 void MainWindow::about() {
