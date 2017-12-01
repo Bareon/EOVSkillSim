@@ -495,6 +495,9 @@ void MainLayout::setSkillsB() {
       }
     }
   }
+
+  auto* skillLine = new LineDraw(classButtons[0],classButtons[14]);
+  baseSkillsBox->addItem(skillLine);
 }
 
 //Updates Master Skill buttons with active Class, resets Master Skill allocation

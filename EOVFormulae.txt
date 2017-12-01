@@ -1,0 +1,200 @@
+'a' prefix = attacker. 
+'d' = defender. 
+'b' = base.
+ 
+
+Player Damage
+=============
+Attack = (aSTAT + aATK)
+Defense = (dSTAT * 2)
+compScore = Defense / Attack
+ 
+aSTAT = aSTR if a STR attack is being used. aINT if an INT attack is being used.
+aATK = aWATK if a STR attack is being used. aMATK if an INT attack is being used.
+dSTAT = dVIT if a STR attack is being used. dWIS if an INT attack is being used.
+ 
+If compScore > 1 (enemy defense outpaces your attack):
+Factor1 = sqrt(sqrt(compScore))
+Factor2 = 1.0 - (Factor1 * 0.7)
+Factor3 = Fttack * 3
+Factor4 = Factor2 * Factor3
+Factor5 = Factor4 - (Defense * 0.2)
+BaseDamage = Factor5 * 0.717
+ 
+BaseDamage = (((1.0 - ((sqrt(sqrt(compScore))) * 0.7)) * ((aSTR + aATK) * 3)) - ((dVIT * 2) / 5) * 0.717)
+ 
+Otherwise (your attack outpaces enemy defense):
+Factor1 = 1.0 - compScore
+Factor2 = Factor1 ^ 3
+Factor3 = 0.3 + (Factor2 * 1.7)
+Factor4 = Attack * 3
+Factor5 = Factor3 * Factor4
+Factor6 = Factor5 - (Defense * 0.2)
+BaseDamage = Factor6 * 0.717
+ 
+BaseDamage = (((0.3 + (((1.0 - ((dVIT * 2) / (aSTR + aATK))) ^ 3) * 1.7)) * ((aSTR + aATK) * 3)) - ((dVIT * 2) / 5)) * 0.717
+ 
+Damage = BaseDamage * SkillPower * Modifiers * Difficulty Factor
+ 
+Difficulty Factor is 1 on Advanced, and 1.2 on Basic.
+
+
+Death's Edge Damage
+===================
+For all party members:
+  S26 = current HP
+  S0 = max HP
+  S1 = 100.0
+  S2 = S26 / S0 = current HP / max HP (% HP remaining)
+  S0 -= S26 = max HP - current HP (HP missing)
+  S1 -= (S2 * S18) = 100.0 - (% HP remaining * 100.0) (% HP missing)
+  S25 += S0 (party total HP missing)
+  S0 = S1 * S17 = % HP missing * 0.01 (decimal % HP missing)
+  S16 += S0 (party % HP missing)
+ 
+With Fence missing 55 HP, Dragoo missing 22:
+  S16 = 1.262295
+  S25 = 77.0
+ 
+  R4 = 0x30 = 48
+ 
+  S0 = R6 = 5 (party members)
+  S3 = R0 = subhead level (always 100 for DE)
+  S4 = 0.0001
+  S1 = R4 (damage)
+  S2 and S5 = S0 = 5 (party members)
+  S0 = S16 / S2 (party % HP missing / party members) = 0.252459
+  S2 = S25 / S5 (party raw HP missing / party members) = 15.4
+  S5 = S0 (party avg % HP missing)
+  S2 = S2 * S3 (pary raw HP missing * 100) = 1540.0
+  S5 += (S0 ^ 2) = party avg % HP missing + (party avg % HP missing ^ 2) = 0.31619453
+  S0 = S19 = 1.0
+  S0 += (S2 * S4) = 1.0 + (party raw HP missing * 100 * 0.0001) = 1.154
+  S3 = S5 + S22 = S5 + 0.02 = 0.33619455
+  S2 = S3 * S21 = S3 * 0.5 = 0.16809727
+  S0 = S0 * S2 = 1.154 * 0.16809727 = 0.19398426
+  S0 = S1 * S0 = damage * final mult = 48 * 0.19398426 = 9.311244
+ 
+
+Buff Parameters
+===============
+Attack buffs and defense debuffs are additive.
+ 
+Defense buffs and attack debuffs are multiplicative.
+  
+
+Critical Hit Rate
+=================
+Crit Rate = [(aLUC + 25) * 100] / (dLUC + 25)
+ 
+If the result is less than 30, set it to 30.
+If the result is greater than 300, set it to 300.
+Then roll a number between 0 and 1000.
+If that number is lower than the result of the formula, the attack will be a critical hit.
+ 
+Sword God's value is added after the Crit Rate is calculated, allowing it to bypass the cap.
+ 
+
+Accuracy
+========
+A = [((aAGI * 2) + aLUC) * 10] / [(dAGI * 2) + dLUC]
+ 
+AGI is halved and rounded down if the entities involved have their legs bound.
+A is rounded down.
+ 
+If A < 10, B = [(BaseAccuracy + SkillMod) * 10] * [1 - (1 - ((sqrt(result / 10) * 10) / 10)) ^ 2]
+If A >= 10, B = (87.5 + (((A / 20) * 50) * (TS * 2.5)) * (BaseAccuracy + SkillMod)) / 10
+ 
+Base Accuracy Parameters:
+If a party member is using a skill that does not require a weapon, Base Accuracy = Skill Accuracy.
+If a party member is using a skill that requires a weapon, Base Accuracy = Weapon Accuracy.
+If a party member does not have a weapon equipped, Weapon Accuracy = 95.
+If an enemy is using a regular attack, Base Accuracy = 99.
+If an enemy is using a skill, Base Accuracy = Skill Accuracy.
+ 
+C = B + Modifiers
+ 
+Modifier Parameters:
+Accuracy buffs and evasion debuffs are positive numbers.
+Accuracy debuffs and evasion buffs are negative numbers.
+ 
+If C > 1500, C = 1500
+ 
+If the attacker is blinded, D = C * 0.33
+ 
+If the skill bypasses accuracy checks or the target is petrified, asleep, panicked, blind, paralyzed (Only if the effect activates), or leg bound, D = 1000
+ 
+Else, D = C.
+ 
+Roll a number between 1 and 1000. If that number is lower than or equal to D, the attack lands.
+  
+
+Infliction Rate
+===============
+aScore = aStat + (aLUC * 2)
+ 
+If the skill being cast is Windstorm, Rockfall, Alter, or Chain Blast, aStat = INT. Else, aStat = LUC.
+ 
+A = [(aScore + 76.5) / ((dLUC * 3) + 76.5)] * 10
+ 
+IR = Skill's infliction rate
+ 
+If A <= 2, B = IR
+If A > 2 & A < 50, B = IR * A
+If A >= 50, B = IR * 50
+ 
+C = B * Resistance * Difficulty Factor * Modifiers
+ 
+Resistance = Base Resistance + Accumualtive Resistance
+Difficulty Factor for players is 1 on Advanced, and 1.2 on Basic. For enemies, this is 1 on Advanced and 0.8 on Basic.
+ 
+If C is greater than 1500, then set it to 1500.
+Then roll a number between 0 and 1000.
+If that number is lower than C, then the ailment lands.
+ 
+
+Poison Damage
+=============
+RNG1 + [(RNG2 + (Base Poison Damage + (Level / 5))) * (1 + (Level / 100))]
+ 
+RNG1: A random number from 0 to 5.
+RNG2: A random number from 0 to 5.
+ 
+
+Healing (INCOMPLETE)
+=======
+A = Healing Power * WIS * 2
+B = WIS * 2 * 0.010599
+C = A * 0.0021786
+D = B * sqrt(Healing Power)
+E = C + (Healing Power * 0.16667)
+Healing Amount = E + (D * 0.1)
+ 
+
+Speed
+=====
+[(Equipment Speed Mod + 100) * AGI * Skill Speed Mod * Random number between 90 and 110 / 10000] * Modifiers
+ 
+Equipment Speed Mods from all pieces of equipment on a party member are added together. For enemies, this is obviously 0. The data for Equipment Speed Mods are as follows:
+ 
+Weapons:
+Swords: 0
+Gauntlets: -5
+Staves: -5
+Katanas: -5
+Bows: 10
+Scythes: 5
+Artillery: -15
+Coffins: 5
+ 
+Equipment:
+Heavy Armor: -10
+Light Armor: 0
+Clothes: 5
+Helmets: 0
+Gloves: 5
+Boots: 10
+Shields: -5
+Accessories: 0
+ 
+When a rare breed acts, their AGI is multiplied by 10.
