@@ -8,14 +8,12 @@ The simulator allows you to allocate and visualize your character's Skill Point 
 
 # To-Do
 ### Priority
-* Class skill trees emulate in-game tree shapes, albeit with minor(yet infuriating) alignment issues. Connecting lines for pre-requisites still needed.
-* Race skills tab is serviceably basic, but ugly. 
+* Class skill trees emulate in-game tree shapes. Connecting lines for pre-requisites still needed.
 
 ### Minor
 * Bug (Feature?) - Skill Points can allocate into negative if exceeding the total from Lv. 99!99.
 * Switch tab focus on Race or Class change to appropriate tab.
-* Info dialog for Damage formulae.
-* Consistent descriptions for Skills, may need the game's release for complete information.
+* Consistent descriptions for Skills, pending review with NA release.
 * Clarity for Defense/Damage modifiers for Skills.
 * Complete stat usage for Master and Race Skills.
 * Import function for saved builds.
